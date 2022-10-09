@@ -102,6 +102,9 @@ describe("Lottery", function () {
 
       const player2Balance = await ethers.provider.getBalance(player2)
       expect(player2Balance).to.be.gt(ethers.utils.parseEther("9999"))
+
+      const contractBalance = await ethers.provider.getBalance(lottery.address)
+      expect(contractBalance).to.equal(ethers.utils.parseEther("0"))
     })
   })
 })
