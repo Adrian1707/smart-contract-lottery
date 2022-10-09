@@ -1,3 +1,9 @@
 [DONE] contract should deploy and set an owner
 [DONE] contract should initiate with funders to amount funded mapping
 [DONE] contract should have a fund function to fund function to fund the contract
+[DONE] contract should keep track of participants that want to opt out and withdraw
+
+- A simple majority of participants (> 50% ) can trigger a full withdrawal of all funds to associated accounts
+  - So given 3 participants, if all 3 have funded and 2 choose to trigger withdrawals, all money goes back to
+    all funders. This allows for a democratic "Get out clause" for lottery participants and ensures that funds
+    do not get hijacked by the owner

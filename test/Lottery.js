@@ -37,5 +37,26 @@ describe("Lottery", function () {
       expect(amountFundedForPlayer1.toString()).to.equal(ethers.utils.parseEther("0.5"))
       expect(contractBalance.toString()).to.equal(ethers.utils.parseEther("0.6"))
     })
+
+    it("Should not allow the same funder to be in the funders array twice", async function() {
+      await lottery.fund({value: ethers.utils.parseEther("0.1")})
+      await lottery.fund({value: ethers.utils.parseEther("0.1")})
+      const funder = await lottery.s_funders(0)
+      expect(funder).to.equal(deployer)
+      await expect(lottery.s_funders(1)).to.be.reverted
+    })
+  })
+
+  describe("voteToWithdraw", async function () {
+    it("should add voter to s_votersWantingToWithdraw", async function() {
+      await lottery.fund({value: ethers.utils.parseEther("0.1")})
+      await lottery.voteToWithdraw(deployer);
+      const voter = await lottery.s_votersWantingToWithdraw(0);
+      expect(voter).to.equal(deployer)
+    })
+
+    it("should not allow a vote unless the user is a funder", async function() {
+      await expect(lottery.voteToWithdraw(deployer)).to.be.revertedWith("You need to be a funder to have a vote on withdrawels")
+    })
   })
 })
