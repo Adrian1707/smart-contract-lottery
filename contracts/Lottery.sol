@@ -13,4 +13,9 @@ contract Lottery {
   constructor() {
     i_owner = msg.sender;
   }
+
+  function fund() public payable {
+    s_addressToAmountFunded[msg.sender] += msg.value;
+    s_funders.push(msg.sender);
+  }
 }

@@ -19,6 +19,7 @@
     "typechain": "^8.1.0"
   },
   "scripts": {
-    "com": "yarn hardhat compile"
+    "com": "yarn hardhat compile",
+    "test": "yarn hardhat test"
   }
 }
