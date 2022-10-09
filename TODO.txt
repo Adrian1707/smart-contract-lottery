@@ -1,0 +1,3 @@
+- contract should initiate with funders to amount funded mapping
+- contract should have a fund function to fund function to fund the contract
+- 
