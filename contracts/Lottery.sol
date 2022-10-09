@@ -26,16 +26,17 @@ contract Lottery {
     s_funders.push(msg.sender);
   }
 
-  function voteToWithdraw(address voterAddress) public {
+  function voteToWithdraw() public {
     bool isFunder;
+    address voterAddress = msg.sender;
     for(uint i = 0; i < s_funders.length; i++) {
       if(s_funders[i] == voterAddress) {
         isFunder = true;
       }
     }
-    
+
     if(isFunder == false) {
-      revert("You need to be a funder to have a vote on withdrawels");
+      revert("You need to be a funder to have a vote on withdrawals");
     }
 
     for(uint i = 0; i < s_votersWantingToWithdraw.length; i++) {
@@ -50,14 +51,15 @@ contract Lottery {
 
   function processWithdrawals() public payable {
     uint256 numberOfVotesToWithdraw = s_votersWantingToWithdraw.length;
-    uint256 proportionOfVotersWantingToWithdraw = (numberOfVotesToWithdraw / s_funders.length) * 100;
-    if(proportionOfVotersWantingToWithdraw > MINIMUM_VOTES_PERCENTAGE_TO_WITHDRAW) {
+    uint fundersLength = s_funders.length;
+    uint votingPercentage = (numberOfVotesToWithdraw  * 100) / fundersLength;
+    if(votingPercentage > MINIMUM_VOTES_PERCENTAGE_TO_WITHDRAW) {
       for(uint256 i = 0; i < s_funders.length; i++) {
-        uint256 funderBalance = s_addressToAmountFunded[s_funders[i]];
-        (bool callSuccess, ) = payable(s_funders[i]).call{value: funderBalance}("");
+        address funderAddress = s_funders[i];
+        uint256 funderBalance = s_addressToAmountFunded[funderAddress];
+        (bool callSuccess, ) = payable(funderAddress).call{value: funderBalance}("");
         require(callSuccess, "Call failed");
-        address funder = s_votersWantingToWithdraw[i];
-        s_addressToAmountFunded[funder] = 0;
+        s_addressToAmountFunded[funderAddress] = 0;
       }
       s_funders = new address[](0);
     }

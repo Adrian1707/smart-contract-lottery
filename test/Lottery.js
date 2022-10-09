@@ -56,7 +56,52 @@ describe("Lottery", function () {
     })
 
     it("should not allow a vote unless the user is a funder", async function() {
-      await expect(lottery.voteToWithdraw(deployer)).to.be.revertedWith("You need to be a funder to have a vote on withdrawels")
+      await expect(lottery.voteToWithdraw(deployer)).to.be.revertedWith("You need to be a funder to have a vote on withdrawals")
+    })
+  })
+
+  describe("processWithdrawals", async function() {
+    beforeEach(async function() {
+      const deployer = (await getNamedAccounts()).deployer
+      deployerLottery  = await ethers.getContract("Lottery", deployer)
+      await lottery.fund({value: ethers.utils.parseEther("4000")})
+
+      const player1 = (await getNamedAccounts()).player1
+      player1Lottery  = await ethers.getContract("Lottery", player1)
+      await player1Lottery.fund({value: ethers.utils.parseEther("5000")})
+
+      const player2 = (await getNamedAccounts()).player2
+      player2Lottery  = await ethers.getContract("Lottery", player2)
+      await player2Lottery.fund({value: ethers.utils.parseEther("1000")})
+    })
+
+    it("Should not process withdrawals when < 50% of funders vote", async function() {
+      await player1Lottery.voteToWithdraw()
+      const contractBalance = await ethers.provider.getBalance(lottery.address)
+      expect(contractBalance).to.equal(ethers.utils.parseEther("10000"))
+
+      const player1 = (await getNamedAccounts()).player1
+      const player1Balance = await ethers.provider.getBalance(player1)
+      expect(player1Balance).to.be.lt(ethers.utils.parseEther("9999"))
+    })
+
+    it("Should process withdrawals when > 50% of funders vote", async function() {
+      const player1 = (await getNamedAccounts()).player1
+      player1Lottery  = await ethers.getContract("Lottery", player1)
+      await player1Lottery.voteToWithdraw()
+
+      const player2 = (await getNamedAccounts()).player2
+      player2Lottery  = await ethers.getContract("Lottery", player2)
+      await player2Lottery.voteToWithdraw()
+
+      const deployerBalance = await ethers.provider.getBalance(deployer)
+      expect(deployerBalance).to.be.gt(ethers.utils.parseEther("9999"))
+
+      const player1Balance = await ethers.provider.getBalance(player1)
+      expect(player1Balance).to.be.gt(ethers.utils.parseEther("9999"))
+
+      const player2Balance = await ethers.provider.getBalance(player2)
+      expect(player2Balance).to.be.gt(ethers.utils.parseEther("9999"))
     })
   })
 })
