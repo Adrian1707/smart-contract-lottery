@@ -11,13 +11,17 @@ contract Lottery {
   address[] public s_votersWantingToWithdraw;
   address public i_owner;
   uint public constant MINIMUM_VOTES_PERCENTAGE_TO_WITHDRAW = 50;
+  uint public constant LOTTERY_TICKET_PRICE_ETH = 1 * (1 * 10**18); // 1 ETH
 
   constructor() {
     i_owner = msg.sender;
   }
 
   function fund() public payable {
-    s_addressToAmountFunded[msg.sender] += msg.value;
+    if(LOTTERY_TICKET_PRICE_ETH != msg.value) {
+      revert("Lottery ticket price is fixed. You cannot send more than 1 ETH");
+    }
+    s_addressToAmountFunded[msg.sender] += LOTTERY_TICKET_PRICE_ETH;
     for(uint i = 0; i < s_funders.length; i++) {
       if(s_funders[i] == msg.sender){
         return;
@@ -53,7 +57,7 @@ contract Lottery {
     uint256 numberOfVotesToWithdraw = s_votersWantingToWithdraw.length;
     uint fundersLength = s_funders.length;
     uint votingPercentage = (numberOfVotesToWithdraw  * 100) / fundersLength;
-    if(votingPercentage > MINIMUM_VOTES_PERCENTAGE_TO_WITHDRAW) {
+    if(votingPercentage >= MINIMUM_VOTES_PERCENTAGE_TO_WITHDRAW) {
       for(uint256 i = 0; i < s_funders.length; i++) {
         address funderAddress = s_funders[i];
         uint256 funderBalance = s_addressToAmountFunded[funderAddress];
