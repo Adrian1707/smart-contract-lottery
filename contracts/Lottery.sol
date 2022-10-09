@@ -17,6 +17,10 @@ contract Lottery {
     i_owner = msg.sender;
   }
 
+  function getVotersLength() public view returns (uint256) {
+    return s_votersWantingToWithdraw.length;
+  }
+
   function fund() public payable {
     if(LOTTERY_TICKET_PRICE_ETH != msg.value) {
       revert("Lottery ticket price is fixed. You cannot send more than 1 ETH");
@@ -24,7 +28,7 @@ contract Lottery {
     s_addressToAmountFunded[msg.sender] += LOTTERY_TICKET_PRICE_ETH;
     for(uint i = 0; i < s_funders.length; i++) {
       if(s_funders[i] == msg.sender){
-        return;
+        revert("You can only buy one lottery ticket");
       }
     }
     s_funders.push(msg.sender);
@@ -66,6 +70,7 @@ contract Lottery {
         s_addressToAmountFunded[funderAddress] = 0;
       }
       s_funders = new address[](0);
+      s_votersWantingToWithdraw = new address[](0);
     }
   }
 }
