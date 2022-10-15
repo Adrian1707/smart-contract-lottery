@@ -4,7 +4,12 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy")
 require("hardhat-gas-reporter");
 require("dotenv").config()
-
+const GOERLI_RPC_URL =
+    process.env.GOERLI_URL ||
+    "https://eth-mainnet.alchemyapi.io/v2/your-api-key"
+const PRIVATE_KEY =
+    process.env.PRIVATE_KEY || ""
+const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.17",
@@ -22,5 +27,19 @@ module.exports = {
         1: 2
       },
   },
-  defaultNetwork: 'hardhat'
+  defaultNetwork: 'hardhat',
+  networks: {
+      goerli: {
+          url: GOERLI_RPC_URL,
+          accounts: [PRIVATE_KEY],
+          chainId: 5,
+          blockConfirmations: 6,
+      },
+  },
+  gasReporter: {
+   currency: 'USD',
+   enabled: true,
+   coinmarketcap: COINMARKETCAP_API_KEY,
+   token: 'ETH'
+  },
 };

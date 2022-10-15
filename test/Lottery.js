@@ -19,11 +19,11 @@ describe("Lottery", function () {
     it("Should add funds to the contract from the sender", async function() {
       const votersLength = await lottery.getVotersLength()
       expect(votersLength).to.eq(0)
-      await lottery.fund({value: ethers.utils.parseEther("1.0")})
+      await lottery.fund({value: ethers.utils.parseEther("0.1")})
       const amountFundedForDeployer = await lottery.s_addressToAmountFunded(deployer)
       const contractBalance = await ethers.provider.getBalance(lottery.address)
-      expect(amountFundedForDeployer.toString()).to.equal(ethers.utils.parseEther("1.0"))
-      expect(contractBalance.toString()).to.equal(ethers.utils.parseEther("1.0"))
+      expect(amountFundedForDeployer.toString()).to.equal(ethers.utils.parseEther("0.1"))
+      expect(contractBalance.toString()).to.equal(ethers.utils.parseEther("0.1"))
     })
 
     it("Should add funds from multiple senders", async function() {
@@ -99,7 +99,6 @@ describe("Lottery", function () {
 
       const player1 = (await getNamedAccounts()).player1
       const player1Balance = await ethers.provider.getBalance(player1)
-      console.log(player1Balance.toString())
       expect(player1Balance).to.be.lt(ethers.utils.parseEther("9999"))
     })
 

@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@chainlink/contracts": "^0.5.1",
     "@ethersproject/abi": "^5.4.7",
     "@ethersproject/providers": "^5.4.7",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.0",
@@ -20,6 +21,7 @@
   },
   "scripts": {
     "com": "yarn hardhat compile",
-    "test": "yarn hardhat test"
+    "test": "yarn hardhat test",
+    "node": "yarn hardhat node"
   }
 }

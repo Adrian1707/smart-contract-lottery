@@ -8,7 +8,8 @@ module.exports = async ({getNamedAccounts, deployements}) => {
   console.log("deploying.....")
   const lottery = await deploy("Lottery", {
     from: deployer,
-    log: true
+    log: true,
+    args: [4631] // fake subscriptionId
   })
 }
 
